@@ -1,0 +1,10 @@
+INFO:root:User was asked to input a file name.
+INFO:root:Program initialised. User entered a valid file.
+INFO:root:Transactions2014.csv has been opened in read mode.
+INFO:root:Transactions2014.csv has been read and closed.
+INFO:root:User was asked to select a command.
+INFO:root:User selected the List All function.
+INFO:root:List All function complete.
+INFO:root:User was asked to select a command.
+INFO:root:User quit the program.
+INFO:root:Program terminated.

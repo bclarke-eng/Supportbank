@@ -3,6 +3,7 @@ import logging  # import library for logging
 from Balances import Balances
 from Transaction import Transaction
 import xml.etree.ElementTree as El
+import datetime
 
 logging.basicConfig(filename='SupportBank.log', filemode='w', level=logging.DEBUG)
 
@@ -84,18 +85,22 @@ def read_xml(filename):
         if file.mode == "r":
             content = El.parse(filename)
             root = content.getroot()
-            transactions = []
-
-            for payment in root.findall("SupportTransaction"):
-                date = payment.get("Date")
+            rows = []
+            old_time = datetime.date(1900, 1, 1)
 
             for i in range(0, 149):
+                new_time = old_time + datetime.timedelta(days=int(root[i].get("Date")))
+                date = new_time.strftime("%d/%m/%y")
                 from_person = root[i][2][0].text
                 to_person = root[i][2][1].text
                 narrative = root[i][0].text
                 value = root[i][1].text
-                print(date, from_person, to_person, narrative, value)
-                transactions.append((date, from_person, to_person, narrative, value))
+
+                rows.append((date, from_person, to_person, narrative, value))
+
+            transactions = []
+            for xml_transaction in rows:
+                transactions.append(Transaction.from_xml(xml_transaction))
 
             logging.info(filename + " has been read and closed.")
             return transactions

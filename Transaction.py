@@ -15,6 +15,11 @@ class Transaction():
         return Transaction(json_transaction[0], json_transaction[1], json_transaction[2],
                            json_transaction[3], json_transaction[4])
 
+    @staticmethod
+    def from_xml(xml_transaction):
+        return Transaction(xml_transaction[0], xml_transaction[1], xml_transaction[2],
+                           xml_transaction[3], xml_transaction[4])
+
     def get_amount(self):
         return self.amount
 

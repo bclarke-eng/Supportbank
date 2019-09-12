@@ -14,7 +14,7 @@ def valid_file():
     while carry_on:
         file_input = input("Please enter the name of the file you'd like to search (with extension):\n")
         try:
-            transaction_list = read_file(file_input)  # user inputs a file to be read
+            transaction_list = file_type(file_input)  # user inputs a file to be read
             amounts = Balances(transaction_list)
             carry_on = False
             enter_command()
@@ -24,29 +24,80 @@ def valid_file():
     return amounts, transaction_list
 
 
-def read_file(filename):  # function that opens and reads a csv file
+def file_type(filename):
+    if re.search(r".+\.(csv)", filename):
+        logging.info("User entered a .csv file.")
+        return read_csv(filename)
+    elif re.search(r".+\.(json)", filename):
+        logging.info("User entered a .json file")
+        return read_json(filename)
+    elif re.search(r".+\.(xml)", filename):
+        logging.info("User entered a .xml file")
+        return read_xml(filename)
+    else:
+        print("Sorry. I can't read that file. ")
+        logging.info("User entered an unrecognised file type. The file entered was:" + filename)
+        return valid_file()
+
+
+def read_open_file(filename, file):
+    content = file.read()
+    logging.info('Program initialised. User entered a valid file.')  # creates a log
+    logging.info(filename + " has been opened in read mode.")
+    return content
+
+
+def read_csv(filename):  # function that opens and reads a csv file
     with open(filename, "r") as file:
         if file.mode == "r":
-            content = file.read()
-            logging.info('Program initialised. User entered a valid file.')  # creates a log
-            logging.info(filename + " has been opened in read mode.")
+            content = read_open_file(filename, file)
             rows = re.findall(r"(\d{2}\/\d{2}\/\d{4}),([^,]+),([^,]+),([^,]+),([^,]+)\n\b", content)  # regex search
             # that groups data from each column
 
             transactions = []
-            for row in rows:
-                transactions.append(Transaction(row))
+            for csv_row in rows:
+                transactions.append(Transaction.from_csv(csv_row))
 
             logging.info(filename + " has been read and closed.")
             return transactions
-            # data[0] = date
-            # data[3] = circumstances
+
+
+def read_json(filename):
+    with open(filename, "r") as file:
+        if file.mode == "r":
+            content = read_open_file(filename, file)
+            rows = re.findall(
+                r"""".+": "(\d{4}-\d{2}-\d{2})",\n {4}".+": "(.+ ?.*)",\n {4}".+": "(.+ ?.*)",\n {4}".+": "(.+ ?.*)",\n {4}".+": (\d+.?\d*)""",
+                content)
+
+            transactions = []
+            for json_transaction in rows:
+                transactions.append(Transaction.from_json(json_transaction))
+
+            logging.info(filename + " has been read and closed.")
+            return transactions
+
+
+def read_xml(filename):
+    with open(filename, "r") as file:
+        if file.mode == "r":
+            content = read_open_file(filename, file)
+            rows = re.findall(
+                r"""".+": "(\d{4}-\d{2}-\d{2})",\n {4}".+": "(.+ ?.*)",\n {4}".+": "(.+ ?.*)",\n {4}".+": "(.+ ?.*)",\n {4}".+": (\d+.?\d*)""",
+                content)
+
+            transactions = []
+            for xml_transaction in rows:
+                transactions.append(Transaction.from_xml(xml_transaction))
+
+            logging.info(filename + " has been read and closed.")
+            return transactions
 
 
 def enter_command():
     logging.info("User was asked to select a command.")
     print("\nPlease type a command from the following list: \n"
-          "1. List All \n2. List Account name (e.g. List Account Jon A) \n3. Help \n4. Quit")
+          "1. List All \n2. List Account \n3. Help \n4. Quit")
 
 
 def list_all(balances):  # function for listing all names and their net balances
@@ -61,12 +112,12 @@ def filter_transactions(account_name, transactions):
     transaction_dict = {}  # creates an empty dictionary
     counter = 0  # initiates a counter
     for transaction in transactions:
-        if transaction.owing == account_name:  # if someone has a transaction where they are owed money, add to dict
+        if transaction.owing == account_name:  # if someone has a transaction where they are owe money, add to dict
             transaction_dict[counter] = transaction
             counter += 1  # advance counter
             print(transaction.date, transaction.owed, transaction.owing,
                   "£" + format(float(transaction.amount), ".2f"))  # prints the transactions
-        if transaction.owed == account_name:  # if someone has a transaction where they owe money, add to dict
+        if transaction.owed == account_name:  # if someone has a transaction where they are owed money, add to dict
             transaction_dict[counter] = transaction
             counter += 1
             print(transaction.date, transaction.owed, transaction.owing,
@@ -87,29 +138,36 @@ def list_account(account_name, transactions, balances):  # function that prints 
 def initiate_commands():
     amounts, transaction_list = valid_file()
     cont = True  # allows user to exit at some point
+    continu = True
     while cont:
         command = input()
-        if command.lower() == "list all" or command.lower() == "listall":  # user
+        if command.lower() == "list all" or command.lower() == "listall" or command == "1":  # user
             # chooses a command
             logging.info("User selected the List All function.")
             list_all(amounts)
             enter_command()
-        elif re.search(r"[Ll]ist ?[Aa]ccount", command):  # checks that the user has entered the correct command
-            name = re.findall(r"[Ll]ist ?[Aa]ccount ?([A-Z][a-z]* ?[A-Z]?[a-z]*?)\b", command)[
-                0]  # finds name of account
-            # they want
+        elif re.search(r"[Ll]ist ?[Aa]ccount", command) or command == "2":  # checks that the user has entered the
+            # correct command
+            while continu:
+                try:
+                    choose_account = input("Please enter the name of the account you'd like to see:")
+                    name = re.findall(r"([A-Z][a-z]* ?[A-Z]?[a-z]*?)\b", choose_account)[0]  # finds name of
+                    # the account the user wants
+                    continu = False
+                except IndexError:
+                    print("Sorry. That name was not recognised. Please try again, ensuring the first and last name are "
+                          "capitalised.\n")
             print("Here are the transactions for " + name + ":\n")
             list_account(name, transaction_list, amounts)
             enter_command()
-        elif command.lower() == "help":  # help command brings up menu of commands
+        elif command.lower() == "help" or command == "3":  # help command brings up menu of commands
             logging.info("User requested help. Help menu displayed.")
             enter_command()
-        elif command.lower() == "quit":  # exits the loop
+        elif command.lower() == "quit" or command == "4":  # exits the loop
             print("Thanks for visiting!")
             logging.info("User quit the program.")
             cont = False
             logging.info("Program terminated.")
-            break
         else:
             print("Invalid Command\n")  # if a user enters an invalid command, the loop restarts
             logging.info(

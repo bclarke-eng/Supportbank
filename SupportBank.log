@@ -1,19 +1,11 @@
 INFO:root:User was asked to input a file name.
+INFO:root:User entered a .json file
 INFO:root:Program initialised. User entered a valid file.
-INFO:root:DodgyTransactions2015.csv has been opened in read mode.
-INFO:root:DodgyTransactions2015.csv has been read and closed.
-INFO:root:Invalid entry in amount field. Invalid entry was: One Cheeseburger.
-INFO:root:The error was found in transaction number: 27, and has been skipped.
+INFO:root:Transactions2013.json has been opened in read mode.
+INFO:root:Transactions2013.json has been read and closed.
 INFO:root:User was asked to select a command.
 INFO:root:User selected the List All function.
 INFO:root:List All function complete.
-INFO:root:User was asked to select a command.
-INFO:root:User selected List Account function for Todd
-INFO:root:Todd's account contained 9 transactions
-INFO:root:Total balance for Todd is being calculated.
-INFO:root:List account function was completed for Todd
-INFO:root:User was asked to select a command.
-INFO:root:User requested help. Help menu displayed.
 INFO:root:User was asked to select a command.
 INFO:root:User quit the program.
 INFO:root:Program terminated.

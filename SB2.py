@@ -2,6 +2,7 @@ import re  # import library for regex function
 import logging  # import library for logging
 from Balances import Balances
 from Transaction import Transaction
+import xml.etree.ElementTree as El
 
 logging.basicConfig(filename='SupportBank.log', filemode='w', level=logging.DEBUG)
 
@@ -81,14 +82,20 @@ def read_json(filename):
 def read_xml(filename):
     with open(filename, "r") as file:
         if file.mode == "r":
-            content = read_open_file(filename, file)
-            rows = re.findall(
-                r"""".+": "(\d{4}-\d{2}-\d{2})",\n {4}".+": "(.+ ?.*)",\n {4}".+": "(.+ ?.*)",\n {4}".+": "(.+ ?.*)",\n {4}".+": (\d+.?\d*)""",
-                content)
-
+            content = El.parse(filename)
+            root = content.getroot()
             transactions = []
-            for xml_transaction in rows:
-                transactions.append(Transaction.from_xml(xml_transaction))
+
+            for payment in root.findall("SupportTransaction"):
+                date = payment.get("Date")
+
+            for i in range(0, 149):
+                from_person = root[i][2][0].text
+                to_person = root[i][2][1].text
+                narrative = root[i][0].text
+                value = root[i][1].text
+                print(date, from_person, to_person, narrative, value)
+                transactions.append((date, from_person, to_person, narrative, value))
 
             logging.info(filename + " has been read and closed.")
             return transactions

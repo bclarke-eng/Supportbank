@@ -35,14 +35,14 @@ class Balances():
             else:
                 print(account + " is owed £" + str(balance))
 
-    def individual_display(self, fullname):
-        for person in self.balances:
-            balance = float(format(self.balances[person], ".2f"))
-            if fullname == account_name: #not sure what to compare to to match user entered name to account holder
-                if balance < 0:
-                    print(person + " owes £" + str(abs(balance)))
-                else:
-                    print(person + " is owed £" + str(balance))
-
     def get(self, name):
         return self.balances[name]
+
+    def individual_display(self, fullname):
+        for name in self.balances:
+            balance = float(format(self.balances[name], ".2f"))
+            if self.balances[fullname] == self.balances[name]:
+                if balance < 0:
+                    print(name + " owes £" + str(abs(balance)))
+                else:
+                    print(name + " is owed £" + str(balance))

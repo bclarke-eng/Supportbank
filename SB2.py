@@ -32,8 +32,7 @@ def list_all(balances):  # function for listing all names and their net balances
     return balances
 
 
-def list_account(account_name, transactions):  # function that prints a list of all transactions and net balance for a
-    # person
+def filter_transactions(account_name, transactions):
     logging.info("User selected List Account function for " + account_name)
     transaction_dict = {}  # creates an empty dictionary
     counter = 0  # initiates a counter
@@ -50,8 +49,12 @@ def list_account(account_name, transactions):  # function that prints a list of 
                   "£" + format(float(transaction.amount), ".2f"))  # prints the transactions
     logging.info(account_name + "'s account contained " + str(counter) + " transactions")
 
-    logging.info("Total balance for " + account_name + " is being calculated.")
 
+def list_account(account_name, transactions):  # function that prints a list of all transactions and net balance for a
+    # person
+    filter_transactions(account_name, transactions)
+
+    logging.info("Total balance for " + account_name + " is being calculated.")
     balances.individual_display(account_name)
     logging.info("List account function was completed for " + account_name)
 

@@ -14,5 +14,3 @@ class Transaction():
 
     def get_owed(self):
         return self.owed
-
-

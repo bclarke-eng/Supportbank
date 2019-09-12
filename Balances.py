@@ -7,10 +7,11 @@ class Balances:
         balances = {}  # creating an empty dictionary
         counter = 1
         for transaction in transactions:
-            amount = transaction.get_amount()
+            amount = transaction.get_amount()  # defining characteristics of an account balance
             to_name = transaction.get_owed()
             from_name = transaction.get_owing()
-            if not re.search(r"\d+\.?\d*", amount):
+            if not re.search(r"\d+\.?\d*", amount):  # if there is something thats not a monetary amount in the
+                # amount field, log the incident and tell the user
                 logging.info("Invalid entry in amount field. Invalid entry was: " + amount + ".")
                 logging.info("The error was found in transaction number: " + str(counter) + ", and has been skipped.")
                 print("Invalid entry in Amount field. Invalid entry was: " + amount + ".\n The error was found in "
@@ -29,7 +30,7 @@ class Balances:
             counter += 1
         self.balances = balances
 
-    def display(self):
+    def display(self):  # function for printing account balances to 2 decimal places
         for account in self.balances:
             balance = float(format(self.balances[account], ".2f"))
             if balance < 0:
@@ -40,10 +41,11 @@ class Balances:
     def get(self, name):
         return self.balances[name]
 
-    def individual_display(self, fullname):
+    def individual_display(self, fullname):  # function for displaying individual account balances during the list
+        # account command
         for name in self.balances:
             balance = float(format(self.balances[name], ".2f"))
-            if self.balances[fullname] == self.balances[name]:
+            if self.balances[fullname] == self.balances[name]:  # finds the correct person's account balance
                 if balance < 0:
                     print(name + " owes £" + str(abs(balance)))
                 else:

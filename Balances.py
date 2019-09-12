@@ -2,7 +2,7 @@ import logging
 import re
 
 
-class Balances():
+class Balances:
     def __init__(self, transactions):
         balances = {}  # creating an empty dictionary
         counter = 1
@@ -11,8 +11,10 @@ class Balances():
             to_name = transaction.get_owed()
             from_name = transaction.get_owing()
             if not re.search(r"\d+\.?\d*", amount):
-                logging.info("Invalid entry in Amount field. Invalid entry was: " + amount + ".")
+                logging.info("Invalid entry in amount field. Invalid entry was: " + amount + ".")
                 logging.info("The error was found in transaction number: " + str(counter) + ", and has been skipped.")
+                print("Invalid entry in Amount field. Invalid entry was: " + amount + ".\n The error was found in "
+                      "transaction number: " + str(counter) + ", and has been skipped.")
                 continue
             if from_name in balances:  # if someone has a transaction where they owe money
                 balances[from_name] += -float(amount)  # deduct that amount from their balance (square brackets = key)

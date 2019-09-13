@@ -1,4 +1,3 @@
-import csv
 import re  # import library for regex function
 import logging  # import library for logging
 from Balances import Balances  # import class that defines balances

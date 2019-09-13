@@ -28,3 +28,6 @@ class Transaction():
 
     def get_owed(self):
         return self.owed
+
+    def export(self):
+        return f"{self.date}, {self.owing}, {self.owed}, {self.reason}, £{self.amount}\n"

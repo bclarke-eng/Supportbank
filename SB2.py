@@ -1,3 +1,4 @@
+import csv
 import re  # import library for regex function
 import logging  # import library for logging
 from Balances import Balances  # import class that defines balances
@@ -150,6 +151,30 @@ def list_account(account_name, transactions, balances):  # function that prints 
     logging.info("List account function was completed for " + account_name)
 
 
+def export_file(transactions):
+    userinput = input("Would you like to export these transactions to a csv file? (y/n) \n")
+    resume = True
+    while resume:
+        if userinput.lower() == "y":
+            logging.info("User chose to export the data to a csv file.")
+            new_filename = input("What would you like to call the exported file?")
+            with open(new_filename + ".csv", mode="w") as exported_file:
+                logging.info("New file, " + new_filename + ".csv, opened in write mode.")
+                exported_file.write("Date, From, To, Description, Amount\n")  # adds headers to the file
+                for line in map(lambda transaction: transaction.export(), transactions):
+                    exported_file.write(line)
+            logging.info("File successfully exported.")
+            print("File successfully exported. The name of the file is: " + new_filename + ".csv")
+            resume = False
+        elif userinput.lower() == "n":
+            logging.info("User chose not to export the data. Command menu displayed")
+            resume = False
+        else:
+            print("Sorry. I did not understand your response.")
+            logging.info("User entered an invalid command. User entered: " + userinput)
+            return export_file(transactions)
+
+
 def initiate_commands():
     amounts, transaction_list = load_file()  # loads file and pulls out relevant amounts
     cont = True  # allows user to exit at some point
@@ -160,6 +185,7 @@ def initiate_commands():
             # chooses a command
             logging.info("User selected the List All function.")
             list_all(amounts)
+            export_file(transaction_list)
             enter_command()
         elif re.search(r"[Ll]ist ?[Aa]ccount", command) or command == "2":  # checks that the user has entered the
             # correct command
@@ -174,6 +200,7 @@ def initiate_commands():
                           "capitalised.\n")
             print("Here are the transactions for " + name + ":\n")
             list_account(name, transaction_list, amounts)
+            export_file(transaction_list)
             enter_command()
         elif command.lower() == "help" or command == "3":  # help command brings up menu of commands
             logging.info("User requested help. Help menu displayed.")

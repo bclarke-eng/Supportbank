@@ -151,7 +151,7 @@ def list_account(account_name, transactions, balances):  # function that prints 
     logging.info("List account function was completed for " + account_name)
 
 
-def export_file(transactions):
+def export_file(transactions):  # function that allows users to export all transactions to a csv file
     userinput = input("Would you like to export these transactions to a csv file? (y/n) \n")
     resume = True
     while resume:
@@ -161,7 +161,8 @@ def export_file(transactions):
             with open(new_filename + ".csv", mode="w") as exported_file:
                 logging.info("New file, " + new_filename + ".csv, opened in write mode.")
                 exported_file.write("Date, From, To, Description, Amount\n")  # adds headers to the file
-                for line in map(lambda transaction: transaction.export(), transactions):
+                for line in map(lambda transaction: transaction.export(), transactions):  # maps elements in a list of
+                    # transaction type objects into a list of strings which can be written into the new file
                     exported_file.write(line)
             logging.info("File successfully exported.")
             print("File successfully exported. The name of the file is: " + new_filename + ".csv")
@@ -185,7 +186,7 @@ def initiate_commands():
             # chooses a command
             logging.info("User selected the List All function.")
             list_all(amounts)
-            export_file(transaction_list)
+            export_file(transaction_list)  # user can choose to export list of transactions to a csv file
             enter_command()
         elif re.search(r"[Ll]ist ?[Aa]ccount", command) or command == "2":  # checks that the user has entered the
             # correct command
@@ -200,7 +201,6 @@ def initiate_commands():
                           "capitalised.\n")
             print("Here are the transactions for " + name + ":\n")
             list_account(name, transaction_list, amounts)
-            export_file(transaction_list)
             enter_command()
         elif command.lower() == "help" or command == "3":  # help command brings up menu of commands
             logging.info("User requested help. Help menu displayed.")
